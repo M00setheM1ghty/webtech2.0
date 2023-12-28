@@ -14,21 +14,42 @@
             <li class="nav-item">
                 <a href="registration.php" class="nav-link">Registrierung</a>
             </li>
-            <li class="nav-item">
+
+            <!-- change to login/logout depending on user -->
+            <?php
+            if (!isset($_SESSION['username'])) {
+                echo '<li class="nav-item">
                 <a href="login.php" class="nav-link">Login</a>
-            </li>
-            <li class="nav-item">
-                <a href="profile.php" class="nav-link">Profil</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">Momentan angemeldet:
-                    <?php
-                    if (isset($_SESSION["username"])) {
-                        echo $_SESSION["username"];
-                    }
-                    ?>
-                </a>
-            </li>
+            </li>';
+            }
+            ?>
+
+
+            <!-- if User is logged in, show the navbar element and the name -->
+            <?php
+            if (isset($_SESSION['username'])) {
+                echo '<li class="nav-item">
+              <a href="profile.php" class="nav-link">Profil</a>
+          </li>';
+
+                echo '<li class="nav-item">
+              <a href="#" class="nav-link">Angemeldet: ';
+
+                if (isset($_SESSION["username"])) {
+                    echo $_SESSION["username"];
+                }
+
+                echo '</a>
+          </li>';
+            }
+            ?>
+            <?php
+            if (isset($_SESSION['username'])) {
+                echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '">
+                <button type="submit" name="logout">Logout</button>
+            </form>';
+            }
+            ?>
         </ul>
     </div>
 </nav>

@@ -1,5 +1,6 @@
 <?php
 session_start();
+$user_role = 'anonymous';
 ?>
 
 <!DOCTYPE html>
@@ -33,6 +34,15 @@ session_start();
         <?php include(dirname(__DIR__) . '/components/footer.php'); ?>
       </div>
     </div>
+    <?php
+        require_once('../../config/dbaccess.php');
+        $db_obj = new mysqli($servername, $username, $password, $database);
+
+        if ($db_obj->connect_error) {
+            echo "Connection Error: " . $db_obj->connect_error;
+            exit();
+        }
+        ?>
   </main>
 </body>
 

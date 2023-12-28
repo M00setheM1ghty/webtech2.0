@@ -57,9 +57,20 @@ session_start();
                 </ul>
 
                 <p class="col-md-8 fs-4">Hotelverwaltung:</p>
-                <p>Baumann Thomas, Markus H&auml;mmerle</p>
-                <img src="../images/ThomasB.png" alt="Thomas Baumann">
-                <img src="../images/MarkusH.png" alt="Markus Hämmerle">
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>Thomas Baumann</p>
+                            <img src="../images/thomasb.jpg" width="250" height="200" class="img-fluid"
+                                alt="thomas baumann porträt">
+                        </div>
+                        <div class="col-md-6">
+                            <p>Markus H&auml;mmerle</p>
+                            <img src="../images/MarkusH.png" class="img-fluid" alt="Markus Hämmerle portät">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <?php include(dirname(__DIR__) . '/components/footer.php'); ?>

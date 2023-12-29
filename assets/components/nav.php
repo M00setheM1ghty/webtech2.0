@@ -1,3 +1,18 @@
+<?php
+// Handle logout if the logout button is clicked
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
+    // Unset all session variables
+    $_SESSION = array();
+
+    // Destroy the session
+    session_destroy();
+
+    // Redirect to the login page after logout
+    header('Location: login.php');
+    exit;
+}
+?>
+
 <nav class="navbar navbar-expand">
     <div class="container">
         <a href="#" class="navbar-brand">HS</a>
@@ -23,7 +38,6 @@
             </li>';
             }
             ?>
-
 
             <!-- if User is logged in, show the navbar element and the name -->
             <?php

@@ -3,11 +3,12 @@
 $anredeErr = $fnameErr = $lnameErr = $usernameErr = $emailErr = $telefonErr = $passwordErr = $passwordcheckErr = "";
 $anrede = $fname = $lname = $username = $email = $telefon = $password = $passwordcheck = "";
 
+// check user input
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (empty($_POST["anrede"])) {
     $anredeErr = "Anrede fehlt";
   } else {
-    $name = test_input($_POST["anrede"]);
+    $anrede = test_input($_POST["anrede"]);
   }
 
   if (empty($_POST["email"])) {
@@ -39,20 +40,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $telefon = test_input($_POST["telefon"]);
   }
+  /*
+  if (isset($_POST["gender"])) {
+    $selectedGender = test_input($_POST["gender"]);
+  }*/
 
   if (empty($_POST["password"]) || empty($_POST["password-check"])) {
     $passwordErr = "Passwort fehlt";
+  } else {
+    $password = $_POST["password"];
   }
-  if (($_POST["password"] != $_POST["password-check"])){
+  if (($_POST["password"] != $_POST["password-check"])) {
     $passwordcheckErr = "Passwörter stimmen nicht überein";
+  } else {
+    $passwordcheck = $_POST["password-check"];
+  }
+
+  // initialise variables for prepared statemtns
+  $vorname = $fname;
+  $nachname = $lname;
+  $mail = $email;
+  $rollen_id = 2; // registered user id = 2
+  $user_id = null;
+  $user_count = 0;
+
+  require_once('../../config/dbaccess.php');
+
+  // check if user exists already
+  $check_query = "SELECT COUNT(*) FROM user_profil WHERE email = ?";
+  $check_stmt = $db_obj->prepare($check_query);
+  $check_stmt->bind_param("s", $email);
+  $check_stmt->execute();
+  $check_stmt->bind_result($user_count);
+  $check_stmt->fetch();
+  $check_stmt->close();
+
+  if ($user_count > 0) {
+    echo 'User mit dieser Email existiert bereits.';
+  } else {
+    $insert_user_profil_data =
+      "INSERT INTO `user_profil` (`vorname`, `nachname`, `email`, `rollen_id`)
+VALUES (?,?,?,?)";
+
+    $stmt = $db_obj->prepare($insert_user_profil_data);
+    $stmt->bind_param("sssi", $vorname, $nachname, $mail, $rollen_id);
+    $stmt->execute();
   }
 }
+
+
+//insert user information into db with prepared statements
+
 ?>
 
 <form action="registration.php" method="post">
   <div>
     <label for="anrede" class="form-label">Anrede</label>
-    <input type="text" name="name" id="anrede" class="form-control" required>
+    <input type="text" name="anrede" id="anrede" class="form-control" required>
   </div>
   <div>
     <label for="fname" class="form-label">Name</label>
@@ -68,8 +112,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </div>
 
   <div>
-    <label for="Telefon" class="form-label">Telefon</label>
-    <input type="tel" name="Telefon" id="Telefon" class="form-control" required>
+    <label for="telefon" class="form-label">Telefon</label>
+    <input type="tel" name="telefon" id="telefon" class="form-control" required>
   </div>
 
   <div>
@@ -78,14 +122,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </div>
   <div>
     <label for="password" class="form-label">Passwort</label>
-      <input type="password" name="password" id="passwort" class="form-control" required>
+    <input type="password" name="password" id="password" class="form-control" required>
     <label for="password-check" class="form-label">Passwort-Check</label>
-      <input type="password" name="password-check" id="password-check" class="form-control" required>
+    <input type="password" name="password-check" id="password-check" class="form-control" required>
   </div>
 
   <div>
     <label for="nutrition" class="form-label">bevorzugte Ernährung:</label>
-    <select id="nutrition" title="ernährung" class="form-select">
+    <select id="nutrition" name="nutrition" title="ernährung" class="form-select">
       <option value="allesesser">keine Präferenz</option>
       <option value="Vegetarier">Vegetarisch</option>
       <option value="Vegan">Vegan</option>
@@ -119,7 +163,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </form>
 
 <?php
-function test_input($data) {
+function test_input($data)
+{
   $data = trim($data);
   $data = stripslashes($data);
   $data = htmlspecialchars($data);

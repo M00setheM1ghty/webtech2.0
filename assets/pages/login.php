@@ -1,19 +1,40 @@
 <?php
 session_start();
 
-$users = [
-    'thomas' => ['password' => 'thomas1', 'email' => 'thomas@example.com', 'name' => 'thomas'],
-    'markus' => ['password' => 'markus1', 'email' => 'markus@example.com', 'name' => 'markus'],
-];
+$debug = true;
+// include functions
+require_once '../components/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['login'])) {
         // Login logic
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        $email_input = test_input($_POST['email-login']);
+        $password_input = $_POST['password'];
 
-        if (isset($users[$username]) && $users[$username]['password'] === $password) {
-            $_SESSION['username'] = $username;
+        if ($debug) {
+            echo $email_input . '<br>';
+            echo $password_input . "<br>";
+        }
+
+        // get email and pswd from db to compare with input
+        require_once('../../config/dbaccess.php');
+        $get_vars = "SELECT email, pswd, vorname FROM user_profil WHERE email=?";
+        $stmt = $db_obj->prepare($get_vars);
+        $stmt->bind_param("s", $email_input);
+        $stmt->execute();
+        $stmt->bind_result($user_mail, $user_pswd_hashed, $user_name);
+        $stmt->fetch();
+        $stmt->close();
+        $db_obj->close();
+
+        if ($debug) {
+            echo "Email: " . $user_mail . "<br>";
+            echo "Hashed Password: " . $user_pswd_hashed . "<br>";
+            echo "Username: " . $user_name . "<br>";
+        }
+
+        if (password_verify($password_input, $user_pswd_hashed)) {
+            $_SESSION['username'] = $user_name;
             header('Location: profile.php');
             exit;
         } else {
@@ -21,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +63,7 @@ ini_set('display_errors', 1);
 </head>
 
 <body>
-<?php include(dirname(__DIR__) . '/components/nav.php'); ?>
+    <?php include(dirname(__DIR__) . '/components/nav.php'); ?>
     <main>
         <div class="container">
             <div class="p-5 mb-4 bg-body-tertiary rounded-3">

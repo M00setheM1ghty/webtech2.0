@@ -2,8 +2,8 @@
   <form method="post" action="login.php">
     <!-- Email input -->
     <div class="form-outline mb-4">
-      <input type="text" id="username" class="form-control" name="username" />
-      <label class="form-label" for="username">Username</label>
+      <input type="text" id="email-login" class="form-control" name="email-login" />
+      <label class="form-label" for="email-login">Email</label>
     </div>
 
     <!-- Password input -->

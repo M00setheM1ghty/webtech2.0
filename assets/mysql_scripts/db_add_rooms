@@ -1,8 +1,0 @@
-INSERT INTO `zimmer` (`zimmer_nr`, `reserved_by_user`) VALUES ('100', NULL);
-INSERT INTO `zimmer` (`zimmer_nr`, `reserved_by_user`) VALUES ('200', NULL);
-INSERT INTO `zimmer` (`zimmer_nr`, `reserved_by_user`) VALUES ('300', NULL);
-INSERT INTO `zimmer` (`zimmer_nr`, `reserved_by_user`) VALUES ('400', NULL);
-INSERT INTO `zimmer` (`zimmer_nr`, `reserved_by_user`) VALUES ('500', NULL);
-INSERT INTO `zimmer` (`zimmer_nr`, `reserved_by_user`) VALUES ('600', NULL);
-INSERT INTO `zimmer` (`zimmer_nr`, `reserved_by_user`) VALUES ('700', NULL);
-INSERT INTO `zimmer` (`zimmer_nr`, `reserved_by_user`) VALUES ('800', NULL);

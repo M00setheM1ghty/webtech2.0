@@ -105,11 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
         <hr>
         <div class="row">
             <div class="col-md-12">
-                <h3>Willst du die Erinnerungen teilen?</h3>
-                <p>Lade doch gerne Fotos von deinem Besuch hoch! Deine Bilder machen nicht nur deine Erfahrung
+                <h3>Wollen Sie Erinnerungen teilen?</h3>
+                <p>Laden Sie Fotos von Ihrem Besuch hoch! Ihre Bilder machen nicht nur deine Erfahrung
                     unvergesslich,
-                    sondern helfen auch zukünftigen Besuchern, die Vorfreude zu teilen. Wir würden uns freuen, deine
-                    Eindrücke zu sehen! #TeileDeinErlebnis</p>
+                    sondern helfen auch zukünftigen Besuchern, die Vorfreude zu teilen. Wir würden uns freuen, Ihre
+                    Eindrücke zu sehen! #ErlebnisTeilen</p>
             </div>
         </div>
         <form method="post" enctype="multipart/form-data" action="../components/process-form.php">

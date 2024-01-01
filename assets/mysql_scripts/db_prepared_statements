@@ -1,3 +1,0 @@
-$insert_user_profil_data =
-"INSERT INTO `user_profil` (`vorname`, `nachname`, `email`, 'gender', 'rollen_id','user_id')
-VALUES (?,?,?,?,?,?)";

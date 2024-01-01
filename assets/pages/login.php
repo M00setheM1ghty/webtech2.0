@@ -3,7 +3,7 @@ session_start();
 
 $debug = true;
 // include functions
-require_once '../components/functions.php';
+require_once ('../components/functions.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['login'])) {
@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_result($user_mail, $user_pswd_hashed, $user_name);
         $stmt->fetch();
         $stmt->close();
-        $db_obj->close();
 
         if ($debug) {
             echo "Email: " . $user_mail . "<br>";
@@ -33,10 +32,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Username: " . $user_name . "<br>";
         }
 
-        if (password_verify($password_input, $user_pswd_hashed)) {
+        // compare passwords
+        $pswd_match = password_verify($password_input, $user_pswd_hashed);
+        if ($debug) {
+          echo "Password Match: " . ($pswd_match ? 'Yes' : 'No') . "<br>";
+      }
+        
+        if ($pswd_match) {
             $_SESSION['username'] = $user_name;
+            $_SESSION['email'] = $user_mail;
+            $_SESSION['pswd'] = $user_pswd_hashed;
+
+            $pswd_success = 'Passwort ist gültig.'; 
             header('Location: profile.php');
-            exit;
+            exit();
         } else {
             $loginError = 'Falscher username oder passwort';
         }

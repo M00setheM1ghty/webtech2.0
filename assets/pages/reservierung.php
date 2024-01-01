@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check if the selected end date is at least 2 days after the start date
     if ($endDateTime < $startDateTime) {
-        // Handle error: Minimum booking time not met
         echo "Error: The minimum booking time is 2 days. Please select an end date at least 2 days after the start date.";
         exit;
     }
@@ -31,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get selected rooms
     $selectedRooms = isset($_POST['rooms']) ? $_POST['rooms'] : [];
 
-    // Now you can process each selected room
+    // process data and add to db
     require_once('../../config/dbaccess.php');
 
-    // Retrieve `user_id` based on provided email from `user_profil` table
+    // get `user_id` with email from `user_profil` table
     $selectUserIdQuery = "SELECT `user_id` FROM `user_profil` WHERE `email` = ?";
     $stmtSelectUserId = $db_obj->prepare($selectUserIdQuery);
     $stmtSelectUserId->bind_param("s", $email);
@@ -43,18 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmtSelectUserId->fetch();
     $stmtSelectUserId->close();
 
-    // Insert into `reservations` table
+    // insert into table
     $insertReservationQuery = "INSERT INTO `reservations` (`user_id`, `start_date`, `end_date`, `breakfast`, `parking`, `pets`) 
                                 VALUES (?, ?, ?, ?, ?, ?)";
     $stmtReservation = $db_obj->prepare($insertReservationQuery);
     $stmtReservation->bind_param("isssii", $userId, $startDate, $endDate, $breakfast, $parking, $pets);
     $stmtReservation->execute();
 
-    // Get the generated reservation_id -> autoincremented value
+    // get reservation_id -> autoincremented value to add to reservation_rooms table
     $reservationId = $stmtReservation->insert_id;
     $stmtReservation->close();
 
-    // Insert into `reservation_rooms` table for each selected room
+    // add to `reservation_rooms` table for each selected room
     foreach ($selectedRooms as $roomNumber) {
         $insertReservationRoomQuery = "INSERT INTO `reservation_rooms` (`reservation_id`, `room_id`) 
                                         VALUES (?, ?)";
@@ -75,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtReservationRoom->close();
     }
 
-    // Redirect or show success message
+    // echo success msg
     $reservation_success = "Reservierung wurde abgeschickt.";
 }
 ?>

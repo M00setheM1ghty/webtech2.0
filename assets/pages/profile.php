@@ -3,6 +3,8 @@ $users = [
     'thomas' => ['password' => 'thomas1', 'email' => 'thomas@example.com', 'name' => 'thomas'],
     'markus' => ['password' => 'markus1', 'email' => 'markus@example.com', 'name' => 'markus'],
 ];
+//variable declarations
+$passwordChangeError="";
 
 session_start();
 // Check if the user is logged in
@@ -12,7 +14,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 // Retrieve user data based on the logged-in username
-$loggedInUser = $users[$_SESSION['username']];
+//$loggedInUser = $users[$_SESSION['username']];
 
 // Handle logout if the logout button is clicked
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
@@ -29,21 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
 
 // change password logic
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
-    // Validate the current password
+
+    // Password check
     $currentPassword = $_POST['current-password'];
     $newPassword = $_POST['new-password'];
     $newPasswordCheck = $_POST['new-password-check'];
+    $user_pswd_hashed = $_SESSION['pswd'];
 
     $loggedInUsername = $_SESSION['username'];
 
-    // Password spell check
-    if ($newPassword !== $newPasswordCheck) {
-        $passwordChangeError = 'Passwörter stimmen nicht überein';
-    } elseif (isset($users[$loggedInUsername]) && $users[$loggedInUsername]['password'] === $currentPassword) {
-        // Update the password
-        $users[$loggedInUsername]['password'] = $newPassword;
-        // Display a success message or redirect to a different page
-        $passwordChangeSuccess = true;
+    // Validate the current password
+    if (password_verify($currentPassword, $user_pswd_hashed)) {
+        $passwordChangeError = "";
     } else {
         $passwordChangeError = 'Falsches Passwort!';
     }
@@ -66,7 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
             <div class="container-fluid py-5">
                 <h1 class="display-5 fw-bold">Willkommen</h1>
                 <p class="col-md-8 fs-4">
-                    <?php echo $loggedInUser['name']; ?>!
+                    <?php if (isset($_SESSION['username'])) {
+                        echo $_SESSION['username'];
+                    } ?>!
                 </p>
             </div>
         </div>
@@ -75,7 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
         <div class="row">
             <div class="col-auto">
                 Email:
-                <?php echo $loggedInUser['email']; ?>
+                <?php if (isset($_SESSION['email'])) {
+                    echo $_SESSION['email'];
+                } ?>
             </div>
             <div class="col-auto">
                 <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
@@ -100,10 +103,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
                 <input type="file" id="image" name="image">
 
                 <button>Upload</button>
-                
+
             </div>
         </form>
-        <?php 
+        <?php
         if (isset($_COOKIE["uploadStatus"])) {
             echo "Upload Sucessfull!";
         }
@@ -132,14 +135,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
                 <div class="col-auto">
                     <button type="submit" name="change-password">Passwort ändern</button>
                 </div>
+                <?php echo $passwordChangeError
+                    ?>
             </div>
         </form>
         <?php
         // Display success message or error message
         if (isset($passwordChangeSuccess)) {
             echo '<p>Password wurde geändert!</p>';
-        } elseif (isset($passwordChangeError)) {
-            echo '<p>Error: ' . $passwordChangeError . '</p>';
         }
         ?>
     </div>

@@ -58,9 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (empty($_POST["password"]) || empty($_POST["password-check"])) {
     $passwordErr = "Passwort fehlt";
     increment_error_var($error_var);
-  } else {
-    $password = $_POST["password"];
-  }
+  } 
   if (($_POST["password"] != $_POST["password-check"])) {
     $passwordcheckErr = "Passwörter stimmen nicht überein";
     increment_error_var($error_var);
@@ -120,6 +118,7 @@ if ($user_count > 0) {
 //insert user information into db with prepared statements
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Insert user profile data and hash pswd
+  $password = $_POST["password"];
   $password_hashed = password_hash($password, PASSWORD_ARGON2I);
   $insert_user_profil_data =
     "INSERT INTO `user_profil` (`vorname`, `nachname`, `email`, `rollen_id`, `pswd`)

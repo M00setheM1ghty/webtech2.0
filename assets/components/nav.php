@@ -26,7 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
             <li class="nav-item">
                 <a href="faq.php" class="nav-link">FAQ</a>
             </li>
-
+            <!-- display reservation if username is set -->
+            <?php
+            if (isset($_SESSION['username'])) {
+                echo '<li class="nav-item">
+                <a href="reservierung.php" class="nav-link">Reservierung</a>
+            </li>';
+            }
+            ?>
              <!-- display registration if username not set -->
              <?php
             if (!isset($_SESSION['username'])) {

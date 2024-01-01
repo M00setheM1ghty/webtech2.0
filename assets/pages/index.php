@@ -1,6 +1,5 @@
 <?php
 session_start();
-$user_role = 'anonymous';
 ?>
 
 <!DOCTYPE html>

@@ -1,10 +1,6 @@
 <?php
-$users = [
-    'thomas' => ['password' => 'thomas1', 'email' => 'thomas@example.com', 'name' => 'thomas'],
-    'markus' => ['password' => 'markus1', 'email' => 'markus@example.com', 'name' => 'markus'],
-];
 //variable declarations
-$passwordChangeError="";
+$passwordChangeError = "";
 
 session_start();
 // Check if the user is logged in
@@ -30,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
 }
 
 // change password logic
+require_once('../../config/dbaccess.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
 
     // Password check
@@ -37,12 +34,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
     $newPassword = $_POST['new-password'];
     $newPasswordCheck = $_POST['new-password-check'];
     $user_pswd_hashed = $_SESSION['pswd'];
+    $current_email = $_SESSION['email'];
 
     $loggedInUsername = $_SESSION['username'];
 
     // Validate the current password
     if (password_verify($currentPassword, $user_pswd_hashed)) {
         $passwordChangeError = "";
+        if ($newPassword === $newPasswordCheck) {
+            $passwordChangeSuccess = "Passwort wurde geändert";
+            //update pswd in db
+            $password = $newPassword;
+            $password_hashed = password_hash($newPassword, PASSWORD_ARGON2I);
+            $update_pswd =
+                "UPDATE `user_profil` SET `pswd` = ? WHERE `email` = ?";
+            $insert_pswd = $db_obj->prepare($update_pswd);
+            $insert_pswd->bind_param("ss", $password_hashed, $current_email);
+
+            if ($insert_pswd->execute()) {
+                echo $passwordChangeSuccess;
+            } else {
+                echo "Execution failed.";
+            }
+            $insert_pswd->close();
+            $db_obj->close();
+        }
     } else {
         $passwordChangeError = 'Falsches Passwort!';
     }

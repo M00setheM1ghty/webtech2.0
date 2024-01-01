@@ -77,6 +77,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // echo success msg
     $reservation_success = "Reservierung wurde abgeschickt.";
 }
+// display current reservations
+// Fetch reservations for the current user based on email
+if(isset($email)) {
+    require_once('../../config/dbaccess.php');
+$get_reservations_query = "
+    SELECT `reservation_id`, `user_id`, `start_date`, `end_date`,
+           `breakfast`, `parking`, `pets`, `status`
+    FROM `reservations`
+    WHERE `user_id` IN (SELECT `user_id` FROM `user_profil` WHERE `email` = ?)
+";
+
+$fetch_data = $db_obj->prepare($get_reservations_query);
+$fetch_data->bind_param("s", $user_email);
+$fetch_data->execute();
+// put results in an assoc array
+$fetched_data_array = $fetch_data->get_result();
+//debug
+while ($row = $fetched_data_array->fetch_assoc()) {
+    echo "Reservation ID: " . $row['reservation_id'] . "<br>";
+    echo "User ID: " . $row['user_id'] . "<br>";
+    echo "Start Date: " . $row['start_date'] . "<br>";
+    echo "End Date: " . $row['end_date'] . "<br>";
+    echo "Breakfast: " . $row['breakfast'] . "<br>";
+    echo "Parking: " . $row['parking'] . "<br>";
+    echo "Pets: " . $row['pets'] . "<br>";
+    echo "Status: " . $row['status'] . "<br>";
+    echo "<hr>";
+}
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -117,11 +147,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- max value is set to 1 year after current date -->
                     <div class="form-group">
                         <label for="startDate">Start Date</label>
-                        <input type="date" class="form-control" id="startDate" name="startDate" min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" required>
+                        <input type="date" class="form-control" id="startDate" name="startDate"
+                            min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="endDate">End Date</label>
-                        <input type="date" class="form-control" id="endDate" name="endDate" min="<?php echo date('Y-m-d', strtotime('+5 days')); ?>" max="<?php echo date('Y-m-d', strtotime('+1 year')); ?>" required>
+                        <input type="date" class="form-control" id="endDate" name="endDate"
+                            min="<?php echo date('Y-m-d', strtotime('+5 days')); ?>"
+                            max="<?php echo date('Y-m-d', strtotime('+1 year')); ?>" required>
                     </div>
 
                     <!-- Additional Features -->
@@ -148,7 +181,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ?>
                 </form>
             </div>
+            <div class="container mt-5">
+                <h2 class="mb-4">Aktuelle Reservierungen</h2>
 
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Reservation ID</th>
+                            <th>User ID</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Breakfast</th>
+                            <th>Parking</th>
+                            <th>Pets</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Loop through reservations and display in the table
+                        while ($row = $fetched_data_array->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>{$row['reservation_id']}</td>";
+                            echo "<td>{$row['user_id']}</td>";
+                            echo "<td>{$row['start_date']}</td>";
+                            echo "<td>{$row['end_date']}</td>";
+                            echo "<td>{$row['breakfast']}</td>";
+                            echo "<td>{$row['parking']}</td>";
+                            echo "<td>{$row['pets']}</td>";
+                            echo "<td>{$row['status']}</td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
             <?php include(dirname(__DIR__) . '/components/footer.php'); ?>
         </div>
         </div>

@@ -26,9 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
             <li class="nav-item">
                 <a href="faq.php" class="nav-link">FAQ</a>
             </li>
-            <li class="nav-item">
+            <!--<li class="nav-item">
                 <a href="registration.php" class="nav-link">Registrierung</a>
-            </li>
+            </li>-->
+
+             <!-- display registration if username not set -->
+             <?php
+            if (!isset($_SESSION['username'])) {
+                echo '<li class="nav-item">
+                <a href="registration.php" class="nav-link">Registrierung</a>
+            </li>';
+            }
+            ?>
 
             <!-- change to login/logout depending on user -->
             <?php

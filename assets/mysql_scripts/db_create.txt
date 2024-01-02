@@ -73,3 +73,14 @@ CREATE TABLE reservation_rooms (
     FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id),
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
+
+-- add price per night column
+ALTER TABLE rooms
+ADD COLUMN price_per_night DECIMAL(10,2);
+
+-- Update prices for different rooms
+UPDATE rooms SET price_per_night = 80 WHERE room_id IN (1, 2, 3, 4);
+UPDATE rooms SET price_per_night = 120 WHERE room_id IN (5, 6);
+UPDATE rooms SET price_per_night = 200 WHERE room_id IN (7, 8);
+UPDATE rooms SET price_per_night = 250 WHERE room_id IN (9, 10);
+

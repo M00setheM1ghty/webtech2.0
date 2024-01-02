@@ -9,3 +9,5 @@ INSERT INTO rooms (room_number) VALUES
 (108),
 (109),
 (110);
+
+

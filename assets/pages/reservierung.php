@@ -1,4 +1,5 @@
 <?php
+$debug = true;
 session_start();
 require_once('../components/functions.php');
 // create token and store in session
@@ -8,11 +9,13 @@ if (!isset($_SESSION['reservation_token'])) {
 //declare variables
 $reservation_success = "";
 $email = $_SESSION['email'];
-$debug=true;
+
 
 // Check if the form is submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_token']) &&
-$_POST['reservation_token'] === $_SESSION['reservation_token']) {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_token']) &&
+    $_POST['reservation_token'] === $_SESSION['reservation_token']
+) {
     // Get form data
     $startDate = $_POST['startDate'];
     $endDate = $_POST['endDate'];
@@ -21,6 +24,7 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
     $pets = isset($_POST['pets']) ? 1 : 0;
     $startDate = $_POST['startDate'];
     $endDate = $_POST['endDate'];
+    $person_amount = $_POST['person_amount'];;
 
     //check if dates are correct and do confirm to minimum stay of 2 days
     $startDateTime = new DateTime($startDate);
@@ -51,10 +55,10 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
     $stmtSelectUserId->close();
 
     // insert into table
-    $insertReservationQuery = "INSERT INTO `reservations` (`user_id`, `start_date`, `end_date`, `breakfast`, `parking`, `pets`) 
-                                VALUES (?, ?, ?, ?, ?, ?)";
+    $insertReservationQuery = "INSERT INTO `reservations` (`user_id`, `start_date`, `end_date`, `breakfast`, `parking`, `pets`, `person_amount`) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmtReservation = $db_obj->prepare($insertReservationQuery);
-    $stmtReservation->bind_param("isssii", $userId, $startDate, $endDate, $breakfast, $parking, $pets);
+    $stmtReservation->bind_param("isssiii", $userId, $startDate, $endDate, $breakfast, $parking, $pets, $person_amount);
     $stmtReservation->execute();
 
     // get reservation_id -> autoincremented value to add to reservation_rooms table
@@ -80,11 +84,12 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
         $stmtReservationRoom->bind_param("ii", $reservationId, $roomId);
         $stmtReservationRoom->execute();
         $stmtReservationRoom->close();
+        //reset token
+        $_SESSION['$reservation_token'] = setToken();
     }
     // success msg
     $reservation_success = "Reservierung wurde abgeschickt.";
-    //reset token
-    $_SESSION['$reservation_token']=setToken();
+
 }
 
 
@@ -106,11 +111,17 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
                 <h2 class="mb-4">Zimmerreservierung</h2>
                 <!-- Reservation-form -->
                 <form id="reservationForm" action="reservierung.php" method="post">
-                    <!-- Email Input -->
+                    <!-- Email  -->
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" name="email"
                             value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" readonly
+                            required>
+                    </div>
+                    <!-- personenanzahl -->
+                    <div class="form-group">
+                        <label for="person_amount">Anzahl Personen</label>
+                        <input type="number" class="form-control" id="person_amount" name="person_amount" max=8
                             required>
                     </div>
                     <!-- Room Selection -->
@@ -130,12 +141,12 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
                     <!-- min value is set to 3 days after current date -->
                     <!-- max value is set to 1 year after current date -->
                     <div class="form-group">
-                        <label for="startDate">Start Date</label>
+                        <label for="startDate">Anfang</label>
                         <input type="date" class="form-control" id="startDate" name="startDate"
                             min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="endDate">End Date</label>
+                        <label for="endDate">Ende</label>
                         <input type="date" class="form-control" id="endDate" name="endDate"
                             min="<?php echo date('Y-m-d', strtotime('+5 days')); ?>"
                             max="<?php echo date('Y-m-d', strtotime('+1 year')); ?>" required>
@@ -144,22 +155,22 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
                     <!-- Additional Features -->
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="breakfast" name="breakfast">
-                        <label class="form-check-label" for="breakfast">Include Breakfast</label>
+                        <label class="form-check-label" for="breakfast">+ Frühstück (10 Euro pro Person)</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="parking" name="parking">
-                        <label class="form-check-label" for="parking">Include Parking</label>
+                        <label class="form-check-label" for="parking">+ Parkplatz (20 Euro pauschal)</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="pets" name="pets">
-                        <label class="form-check-label" for="pets">Include Pets</label>
+                        <label class="form-check-label" for="pets">+ Haustiere (50 Euro pauschal)</label>
                     </div>
 
                     <!-- Submit Button -->
                     <input type="hidden" name="reservation_token" value="<?php echo $_SESSION['reservation_token']; ?>">
                     <button type="submit" class="btn btn-primary mt-3" name="submit-reservation">Submit
                         Reservation</button>
-                    <!-- echo successful reservation submission-->  
+                    <!-- echo successful reservation submission-->
                     <?php
                     if (isset($reservation_success)) {
                         echo $reservation_success;
@@ -174,13 +185,14 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Reservation ID</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Breakfast</th>
-                            <th>Parking</th>
-                            <th>Pets</th>
+                            <th>Reservierungsnummer</th>
+                            <th>Checkin</th>
+                            <th>Checkout</th>
+                            <th>Frühstück</th>
+                            <th>Parkplatz</th>
+                            <th>Haustiere</th>
                             <th>Status</th>
+                            <th>Personen</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -189,7 +201,7 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
                         require_once('../../config/dbaccess.php');
                         $get_reservations_query = "
                             SELECT `reservation_id`, `user_id`, `start_date`, `end_date`,
-                            `breakfast`, `parking`, `pets`, `status`
+                            `breakfast`, `parking`, `pets`, `status`, `person_amount`
                             FROM `reservations`
                             WHERE `user_id` IN (SELECT `user_id` FROM `user_profil` WHERE `email` = ?)";
                         $fetch_data = $db_obj->prepare($get_reservations_query);
@@ -197,12 +209,12 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
                         $fetch_data->execute();
                         // put results in an assoc array
                         $fetched_data_array = $fetch_data->get_result();
-                        
-                        if($debug){
+
+                        if ($debug) {
                             if ($fetch_data->error) {
                                 echo "Query error: " . $fetch_data->error;
                             }
-                            
+
                         }
                         // Loop through reservations and display in the table
                         while ($row = $fetched_data_array->fetch_assoc()) {
@@ -214,10 +226,13 @@ $_POST['reservation_token'] === $_SESSION['reservation_token']) {
                             echo "<td>{$row['parking']}</td>";
                             echo "<td>{$row['pets']}</td>";
                             echo "<td>{$row['status']}</td>";
+                            echo "<td>{$row['person_amount']}</td>";
                             echo "</tr>";
                         }
-                        if($debug){echo "Session variables:";
-                            var_dump($_SESSION);}
+                        if ($debug) {
+                            echo "Session variables:";
+                            var_dump($_SESSION);
+                        }
                         ?>
                     </tbody>
                 </table>

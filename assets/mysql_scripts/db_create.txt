@@ -84,3 +84,11 @@ UPDATE rooms SET price_per_night = 120 WHERE room_id IN (5, 6);
 UPDATE rooms SET price_per_night = 200 WHERE room_id IN (7, 8);
 UPDATE rooms SET price_per_night = 250 WHERE room_id IN (9, 10);
 
+-- Add a new column for person_amount
+ALTER TABLE reservations
+ADD COLUMN person_amount INT NOT NULL;
+
+-- add total_charge column to reservation
+
+ALTER TABLE reservations
+ADD COLUMN total_charge DECIMAL(10,2) NOT NULL;

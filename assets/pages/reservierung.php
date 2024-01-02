@@ -1,10 +1,18 @@
 <?php
 session_start();
+require_once('../components/functions.php');
+// create token and store in session
+if (!isset($_SESSION['reservation_token'])) {
+    $_SESSION['reservation_token'] = setToken();
+}
 //declare variables
 $reservation_success = "";
 $email = $_SESSION['email'];
+$debug=true;
+
 // Check if the form is submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_token']) &&
+$_POST['reservation_token'] === $_SESSION['reservation_token']) {
     // Get form data
     $startDate = $_POST['startDate'];
     $endDate = $_POST['endDate'];
@@ -73,40 +81,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtReservationRoom->execute();
         $stmtReservationRoom->close();
     }
-
-    // echo success msg
+    // success msg
     $reservation_success = "Reservierung wurde abgeschickt.";
-}
-// display current reservations
-// Fetch reservations for the current user based on email
-if(isset($email)) {
-    require_once('../../config/dbaccess.php');
-$get_reservations_query = "
-    SELECT `reservation_id`, `user_id`, `start_date`, `end_date`,
-           `breakfast`, `parking`, `pets`, `status`
-    FROM `reservations`
-    WHERE `user_id` IN (SELECT `user_id` FROM `user_profil` WHERE `email` = ?)
-";
-
-$fetch_data = $db_obj->prepare($get_reservations_query);
-$fetch_data->bind_param("s", $user_email);
-$fetch_data->execute();
-// put results in an assoc array
-$fetched_data_array = $fetch_data->get_result();
-//debug
-while ($row = $fetched_data_array->fetch_assoc()) {
-    echo "Reservation ID: " . $row['reservation_id'] . "<br>";
-    echo "User ID: " . $row['user_id'] . "<br>";
-    echo "Start Date: " . $row['start_date'] . "<br>";
-    echo "End Date: " . $row['end_date'] . "<br>";
-    echo "Breakfast: " . $row['breakfast'] . "<br>";
-    echo "Parking: " . $row['parking'] . "<br>";
-    echo "Pets: " . $row['pets'] . "<br>";
-    echo "Status: " . $row['status'] . "<br>";
-    echo "<hr>";
+    //reset token
+    $_SESSION['$reservation_token']=setToken();
 }
 
-}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -122,12 +104,14 @@ while ($row = $fetched_data_array->fetch_assoc()) {
         <div class="container">
             <div class="container mt-5">
                 <h2 class="mb-4">Zimmerreservierung</h2>
+                <!-- Reservation-form -->
                 <form id="reservationForm" action="reservierung.php" method="post">
                     <!-- Email Input -->
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" name="email"
-                            value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" required>
+                            value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" readonly
+                            required>
                     </div>
                     <!-- Room Selection -->
                     <div class="form-group mt-3">
@@ -172,23 +156,25 @@ while ($row = $fetched_data_array->fetch_assoc()) {
                     </div>
 
                     <!-- Submit Button -->
+                    <input type="hidden" name="reservation_token" value="<?php echo $_SESSION['reservation_token']; ?>">
                     <button type="submit" class="btn btn-primary mt-3" name="submit-reservation">Submit
                         Reservation</button>
+                    <!-- echo successful reservation submission-->  
                     <?php
                     if (isset($reservation_success)) {
                         echo $reservation_success;
                     }
                     ?>
                 </form>
+                <!-- end of reservation form -->
             </div>
             <div class="container mt-5">
                 <h2 class="mb-4">Aktuelle Reservierungen</h2>
-
+                <!-- table with current reservation data -->
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Reservation ID</th>
-                            <th>User ID</th>
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th>Breakfast</th>
@@ -199,19 +185,39 @@ while ($row = $fetched_data_array->fetch_assoc()) {
                     </thead>
                     <tbody>
                         <?php
+                        // Fetch reservations for the current user based on email
+                        require_once('../../config/dbaccess.php');
+                        $get_reservations_query = "
+                            SELECT `reservation_id`, `user_id`, `start_date`, `end_date`,
+                            `breakfast`, `parking`, `pets`, `status`
+                            FROM `reservations`
+                            WHERE `user_id` IN (SELECT `user_id` FROM `user_profil` WHERE `email` = ?)";
+                        $fetch_data = $db_obj->prepare($get_reservations_query);
+                        $fetch_data->bind_param("s", $email);
+                        $fetch_data->execute();
+                        // put results in an assoc array
+                        $fetched_data_array = $fetch_data->get_result();
+                        
+                        if($debug){
+                            if ($fetch_data->error) {
+                                echo "Query error: " . $fetch_data->error;
+                            }
+                            
+                        }
                         // Loop through reservations and display in the table
                         while ($row = $fetched_data_array->fetch_assoc()) {
                             echo "<tr>";
                             echo "<td>{$row['reservation_id']}</td>";
-                            echo "<td>{$row['user_id']}</td>";
-                            echo "<td>{$row['start_date']}</td>";
-                            echo "<td>{$row['end_date']}</td>";
+                            echo "<td>" . date("Y-m-d", strtotime($row['start_date'])) . "</td>";
+                            echo "<td>" . date("Y-m-d", strtotime($row['end_date'])) . "</td>";
                             echo "<td>{$row['breakfast']}</td>";
                             echo "<td>{$row['parking']}</td>";
                             echo "<td>{$row['pets']}</td>";
                             echo "<td>{$row['status']}</td>";
                             echo "</tr>";
                         }
+                        if($debug){echo "Session variables:";
+                            var_dump($_SESSION);}
                         ?>
                     </tbody>
                 </table>

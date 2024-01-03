@@ -11,6 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
     header('Location: login.php');
     exit;
 }
+// retrieve rollen_id to display admin.php if necessary
+$email = $_SESSION['email'];
+require_once('../../config/dbaccess.php');
+if (isset($email)){
+    $selectRollenIdQuery = "SELECT `rollen_id` FROM `user_profil` WHERE `email` = ?";
+    $stmtSelectRollenId = $db_obj->prepare($selectRollenIdQuery);
+    $stmtSelectRollenId->bind_param("s", $email);
+    $stmtSelectRollenId->execute();
+    $stmtSelectRollenId->bind_result($rollen_id);
+    $stmtSelectRollenId->fetch();
+    $stmtSelectRollenId->close();
+}
+$_SESSION['rollen_id'] = $rollen_id; 
 ?>
 
 <nav class="navbar navbar-expand">
@@ -31,6 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
             if (isset($_SESSION['username'])) {
                 echo '<li class="nav-item">
                 <a href="reservierung.php" class="nav-link">Reservierung</a>
+            </li>';
+            }
+            ?>
+            <?php
+            if (isset($_SESSION['rollen_id']) && $rollen_id === 1) {
+                echo '<li class="nav-item">
+                <a href="admin.php" class="nav-link">Admin</a>
             </li>';
             }
             ?>

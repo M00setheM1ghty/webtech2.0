@@ -92,3 +92,8 @@ ADD COLUMN person_amount INT NOT NULL;
 
 ALTER TABLE reservations
 ADD COLUMN total_charge DECIMAL(10,2) NOT NULL;
+
+-- add user_status column to user_profil
+
+ALTER TABLE reservations
+ADD COLUMN user_status BOOLEAN NOT NULL;

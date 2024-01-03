@@ -19,17 +19,7 @@ session_start();
             <h1 class="display-5 fw-bold">Hotel Hämmerle</h1>
             <p class="col-md-8 fs-4">Willkommen bei uns im schönen Lech am Arlberg!</p>
           </div>
-        </div>
-        <hr>
-        <div class="container">
-          <h2>News und Aktuelles</h2>
-        </div>
-        <hr>
-        <?php include(dirname(__DIR__) . '/components/news/winterSaisonStart.php'); ?>
-        <?php include(dirname(__DIR__) . '/components/news/festivitaeten.php'); ?>
-        <?php include(dirname(__DIR__) . '/components/news/schneeInLech.php'); ?>
-        <?php include(dirname(__DIR__) . '/components/news/MarcGusner.php'); ?>
-
+        
         <?php include(dirname(__DIR__) . '/components/footer.php'); ?>
       </div>
     </div>

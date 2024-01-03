@@ -97,3 +97,9 @@ ADD COLUMN total_charge DECIMAL(10,2) NOT NULL;
 
 ALTER TABLE reservations
 ADD COLUMN user_status BOOLEAN NOT NULL;
+
+-- add activity status to user_profil
+ALTER TABLE user_profil
+ADD COLUMN user_status VARCHAR(10) NOT NULL DEFAULT 'active';
+
+

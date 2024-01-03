@@ -4,8 +4,9 @@ require_once('../components/functions.php');
 // process data and add to db
 require_once('../../config/dbaccess.php');
 
+// ...........master data change logic..................//
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['change_masterdata'])) {
     // required fields array
     $requiredFields = ['fname-new', 'lname-new', 'email-old', 'email-new', 'password-new', 'password-new-check'];
     $fieldsEmpty = false;
@@ -22,8 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($fieldsEmpty) {
         $empty_field_error = 'Alle Formfelder müssen ausgefüllt sein';
     } else {
-
-        if (isset($_POST['change_masterdata'])) {
             // Retrieve form data
             $fnameNew = test_input($_POST['fname-new']);
             $lnameNew = test_input($_POST['lname-new']);
@@ -52,13 +51,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $update_masterdata->close();
             } else {
                 if ($debug)
-                    echo "Error in preparing the SQL statement.";
+                echo "sql statement fehler";
             }
         }
     }
+
+// .................................status change logic............................................//
+
+if (isset($_POST['change_status'])) {
+    if (isset($_POST['user-status']) && isset($_POST['uemail'])) {
+        $selected_status = $_POST['user-status'];
+        $uemail = $_POST['uemail'];
+        // Update the user status
+        $updateQueryStatus = "UPDATE user_profil SET user_status = ? WHERE email = ?";
+        $update_status = $db_obj->prepare($updateQueryStatus);
+
+        if ($update_status) {
+            $update_status->bind_param("ss", $selected_status, $uemail);
+            $update_status->execute();
+
+            if ($update_status->affected_rows > 0) {
+                $status_update_success = "User Status wurde aktualisiert";
+            } else {
+                $status_update_fail = "Keine Aktulisierung vorgenommen. User Email existiert nicht.";
+            }
+
+            // Close the statement
+            $update_status->close();
+        } else {
+            if ($debug)
+                echo "sql statement fehler";
+        }
+    }
 }
-
-
 ?>
 
 <div class="container">
@@ -107,9 +132,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo $empty_field_error . '<br>';
                     } ?>
                 </div>
-
-                <!-- submit button -->
+                <!-- submit button change masterdata -->
                 <button type="submit" name="change_masterdata" class="btn btn-primary btn-block mb-4">OK</button>
+            </form>
+
+            <!-- change user status form  -->
+            <form action="admin.php" method="post">
+                <h2> Change User Status</h2>
+                <!-- Email input -->
+                <div class="form-outline mb-4">
+                    <input type="text" id="uemail" class="form-control" name="uemail" required />
+                    <label class="form-label" for="uemail">User Email-Adresse</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="user-status" name="user-status" value="active"
+                        checked>
+                    <label class="form-check-label" for="user-status">Active</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="user-status-inactive" name="user-status"
+                        value="inactive">
+                    <label class="form-check-label" for="user-status-inactive">Inactive</label>
+                </div>
+                <!-- submit button change status-->
+                <button type="submit" name="change_status" class="btn btn-primary btn-block mb-4">OK</button>
+                <div class="error">
+                    <?php
+                    if (isset($status_update_success)) {
+                        echo $status_update_success . '<br>';
+                    }
+                    if (isset($status_update_fail)) {
+                        echo $status_update_fail . '<br>';
+                    }
+                    ?>
             </form>
         </div>
     </div>

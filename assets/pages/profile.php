@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
         <hr>
         <div class="row">
             <div class="col-md-12">
-                <h4>Willst du dein Passwort ändern?</h4>
+                <h4>Wollen Sie Ihr Passwort ändern?</h4>
             </div>
         </div>
         <!-- change password form-->

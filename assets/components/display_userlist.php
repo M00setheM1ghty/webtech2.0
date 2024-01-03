@@ -5,6 +5,7 @@
             <th>Vorname</th>
             <th>Nachname</th>
             <th>Email</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -12,7 +13,7 @@
         // Fetch reservations for the current user based on email
         require_once('../../config/dbaccess.php');
         $get_users_query = "
-                            SELECT `nachname`, `vorname`, `email`
+                            SELECT `nachname`, `vorname`, `email`, `user_status`
                             FROM `user_profil`";
         $fetch_users = $db_obj->prepare($get_users_query);
         $fetch_users->execute();
@@ -31,6 +32,7 @@
             echo "<td>{$row['vorname']}</td>";
             echo "<td>{$row['nachname']}</td>";
             echo "<td>{$row['email']}</td>";
+            echo "<td>{$row['user_status']}</td>";
             echo "</tr>";
         }
         if ($debug) {

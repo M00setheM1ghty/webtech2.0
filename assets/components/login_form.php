@@ -11,7 +11,8 @@
       <input type="password" id="password" class="form-control" name="password" />
       <label class="form-label" for="password">Password</label>
     </div>
-    <div class="error"><?php if(isset($loginError)){echo $loginError;}?></div>
+    <div class="error"><?php if(isset($loginError)){echo $loginError . '<br>';}?></div>
+    <div class="error"><?php if(isset($inactive_user_msg)){echo $inactive_user_msg;}?></div>
     <!-- 2 column grid layout -->
     <div class="row mb-4">
       <div class="col d-flex justify-content-center">

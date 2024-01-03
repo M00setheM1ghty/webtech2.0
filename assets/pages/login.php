@@ -5,6 +5,8 @@ $debug = true;
 // include functions
 require_once ('../components/functions.php');
 
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['login'])) {
         // Login logic
@@ -18,11 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // get email and pswd from db to compare with input
         require_once('../../config/dbaccess.php');
-        $get_vars = "SELECT email, pswd, vorname FROM user_profil WHERE email=?";
+        $get_vars = "SELECT email, pswd, vorname, user_status FROM user_profil WHERE email=?";
         $stmt = $db_obj->prepare($get_vars);
         $stmt->bind_param("s", $email_input);
         $stmt->execute();
-        $stmt->bind_result($user_mail, $user_pswd_hashed, $user_name);
+        $stmt->bind_result($user_mail, $user_pswd_hashed, $user_name, $user_status);
         $stmt->fetch();
         $stmt->close();
 
@@ -37,18 +39,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($debug) {
           echo "Password Match: " . ($pswd_match ? 'Yes' : 'No') . "<br>";
       }
-        
-        if ($pswd_match) {
-            $_SESSION['username'] = $user_name;
-            $_SESSION['email'] = $user_mail;
-            $_SESSION['pswd'] = $user_pswd_hashed;
-
-            $pswd_success = 'Passwort ist gültig.'; 
-            header('Location: profile.php');
-            exit();
+      // handle user_status and pswd match
+        if($user_status === 'active') {
+            if ($pswd_match) {
+                $_SESSION['username'] = $user_name;
+                $_SESSION['email'] = $user_mail;
+                $_SESSION['pswd'] = $user_pswd_hashed;
+    
+                $pswd_success = 'Passwort ist gültig.'; 
+                header('Location: profile.php');
+                exit();
+            } else {
+                $loginError = 'Falscher username oder passwort';
+            }
         } else {
-            $loginError = 'Falscher username oder passwort';
+            $inactive_user_msg = 'User wurde vom Admin deaktiviert. Bitte wenden Sie sich an den Support.';
         }
+        
     }
 }
 

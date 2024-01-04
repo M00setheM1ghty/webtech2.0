@@ -8,7 +8,7 @@ require_once('../../assets/components/functions.php');
 $query = "
     SELECT 
         r.`reservation_id`, r.`user_id`, r.`start_date`, r.`end_date`,
-        r.`breakfast`, r.`parking`, r.`pets`, r.`status`, r.`person_amount`,
+        r.`breakfast`, r.`parking`, r.`pets`, r.`reservation_status`, r.`person_amount`,
         u.`vorname`, u.`nachname`, u.`email`, ro.`price_per_night`,
         GROUP_CONCAT(ro.`room_number` ORDER BY ro.`room_number` ASC) AS `room_numbers`,
         GROUP_CONCAT(ro.`price_per_night` ORDER BY ro.`price_per_night` ASC) AS `room_prices`
@@ -22,7 +22,7 @@ $query = "
         `rooms` ro ON rr.`room_id` = ro.`room_id`
     GROUP BY
         r.`reservation_id`, r.`user_id`, r.`start_date`, r.`end_date`,
-        r.`breakfast`, r.`parking`, r.`pets`, r.`status`, r.`person_amount`,
+        r.`breakfast`, r.`parking`, r.`pets`, r.`reservation_status`, r.`person_amount`,
         u.`vorname`, u.`nachname`, u.`email`";
 
 $result = $db_obj->query($query);

@@ -1,12 +1,17 @@
 <div class="container mt-5">
     <div class="table-responsive">
         <?php
-        // show all or only part of reservation info
-            $show_details = false;
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['show_details'])) {
-                $show_details = !$show_details;
-            }
+        if (!isset($_SESSION['show_details'])) {
+            $_SESSION['show_details'] = false;
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['show_details'])) {
+            $_SESSION['show_details'] = !$_SESSION['show_details'];
+        }
+
+        // Use $_SESSION['show_details'] in your logic
+        $show_details = $_SESSION['show_details'];
         ?>
+
         <h2 class="mb-4">Aktuelle Reservierungen</h2>
         <form action="admin.php" method="post">
             <button type="submit" name="show_details">Show Details</button>
@@ -22,20 +27,20 @@
                     <th>Preis</th>
                     <th>Zeitpunkt Buchung</th>
                     <?php
-                    if($show_details){
+                    if ($show_details) {
                         echo '
                         <th>Checkin</th>
                         <th>Checkout</th>
                         <th>Frühstück</th>
                         <th>Parkplatz</th>
                         <th>Haustiere</th>
-                        <th>Status</th>
+                        <th>Reservierung Status</th>
                         <th>Personen</th>
                         <th>Zimmer</th>
                     ';
                     }
                     ?>
-                    
+
                 </tr>
             </thead>
             <tbody>
@@ -47,7 +52,7 @@
                 $get_reservations_query = "
     SELECT 
         r.`reservation_id`, r.`user_id`, r.`start_date`, r.`end_date`,
-        r.`breakfast`, r.`parking`, r.`pets`, r.`status`, r.`person_amount`,
+        r.`breakfast`, r.`parking`, r.`pets`, r.`reservation_status`, r.`person_amount`,
         u.`vorname`, u.`nachname`, u.`email`, r.`total_charge`, r.`created_at`,
         GROUP_CONCAT(ro.`room_number` ORDER BY ro.`room_number` ASC) AS `room_numbers`
     FROM 
@@ -60,7 +65,7 @@
         `rooms` ro ON rr.`room_id` = ro.`room_id`
     GROUP BY
         r.`reservation_id`, r.`user_id`, r.`start_date`, r.`end_date`,
-        r.`breakfast`, r.`parking`, r.`pets`, r.`status`, r.`person_amount`,
+        r.`breakfast`, r.`parking`, r.`pets`, r.`reservation_status`, r.`person_amount`,
         u.`vorname`, u.`nachname`, u.`email`, r.`total_charge`, r.`created_at`";
 
                 $fetch_data = $db_obj->prepare($get_reservations_query);
@@ -89,7 +94,7 @@
                         echo "<td>{$row['breakfast']}</td>";
                         echo "<td>{$row['parking']}</td>";
                         echo "<td>{$row['pets']}</td>";
-                        echo "<td>{$row['status']}</td>";
+                        echo "<td>{$row['reservation_status']}</td>";
                         echo "<td>{$row['person_amount']}</td>";
                         echo "<td>{$row['room_numbers']}</td>";
                     }

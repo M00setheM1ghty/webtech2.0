@@ -21,6 +21,7 @@ $debug = false;
                         <p class="col-md-8 fs-4">Userverwaltung, Reservierungseinsicht, News-Beiträge</p>
                     </div>
                     <!-- display user list and master data change form (display userlist included in change_masterdata.php)-->
+                    <?php include(dirname(__DIR__) . '/components/calculate_total_charge.php'); ?>
                     <?php include(dirname(__DIR__) . '/components/change_masterdata.php'); ?>
                     <?php include(dirname(__DIR__) . '/components/admin_reservations_display.php'); ?>
                 </div>

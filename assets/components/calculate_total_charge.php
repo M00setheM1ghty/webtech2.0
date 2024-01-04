@@ -74,6 +74,5 @@ if ($result) {
 } else {
     echo "Fehler: " . $db_obj->error;
 }
-$db_obj->close();
 
 ?>

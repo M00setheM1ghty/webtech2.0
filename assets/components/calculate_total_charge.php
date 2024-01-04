@@ -1,4 +1,5 @@
 <?php
+$debug = false;
 require_once('../../config/dbaccess.php');
 require_once('../../assets/components/functions.php');
 // Assuming $db_obj is your database connection object
@@ -36,8 +37,6 @@ if ($result) {
             echo "Price Per night: " . $row['room_prices'] . "<br>";
             echo "<hr>";
         }
-
-
         // calculate length of stay
         $startDate = new DateTime($row['start_date']);
         $endDate = new DateTime($row['end_date']);
@@ -56,6 +55,11 @@ if ($result) {
 
         $total_charge = $room_charge + $additional_charge;
 
+        $update_total_charge = "UPDATE `reservations` SET `total_charge` = ? Where `reservation_id` = ?";
+        $update_data = $db_obj->prepare($update_total_charge);
+        $update_data->bind_param("ii", $total_charge, $row['reservation_id']);
+        $update_data->execute();
+
         if ($debug) {
             echo $stayDuration . '<br>';
             echo $room_charge . '<br>';
@@ -65,6 +69,8 @@ if ($result) {
         }
     }
     $result->free();
+    $update_data->close();
+
 } else {
     echo "Fehler: " . $db_obj->error;
 }

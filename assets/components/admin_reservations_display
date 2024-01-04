@@ -23,7 +23,7 @@
             require_once('../../config/dbaccess.php');
             // Fetch reservation and user info for all reservations
             // groupconcat: makes multiple rooms for one reservation into one string
-            // group by: distinguish between concated and non-concated columns
+            // group by: distinguish between concated and non-concat
             $get_reservations_query = "
     SELECT 
         r.`reservation_id`, r.`user_id`, r.`start_date`, r.`end_date`,

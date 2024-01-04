@@ -23,40 +23,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['change_masterdata'])) 
     } elseif ($fieldsEmpty) {
         $empty_field_error = 'Alle Formfelder müssen ausgefüllt sein';
     } else {
-            // Retrieve form data
-            $fnameNew = test_input($_POST['fname-new']);
-            $lnameNew = test_input($_POST['lname-new']);
-            $oldEmail = test_input($_POST['email-old']);
-            $newEmail = test_input($_POST['email-new']);
-            $passwordNew = $_POST['password-new'];
-            $password_new_hashed = password_hash($passwordNew, PASSWORD_ARGON2I);
+        // Retrieve form data
+        $fnameNew = test_input($_POST['fname-new']);
+        $lnameNew = test_input($_POST['lname-new']);
+        $oldEmail = test_input($_POST['email-old']);
+        $newEmail = test_input($_POST['email-new']);
+        $passwordNew = $_POST['password-new'];
+        $password_new_hashed = password_hash($passwordNew, PASSWORD_ARGON2I);
 
-            // Update the user profile 
-            $updateQuery = "UPDATE user_profil SET vorname = ?, nachname = ?, email = ?, pswd = ? WHERE email = ?";
+        // Update the user profile 
+        $updateQuery = "UPDATE user_profil SET vorname = ?, nachname = ?, email = ?, pswd = ? WHERE email = ?";
 
-            $update_masterdata = $db_obj->prepare($updateQuery);
+        $update_masterdata = $db_obj->prepare($updateQuery);
 
-            if ($update_masterdata) {
-                $update_masterdata->bind_param("sssss", $fnameNew, $lnameNew, $newEmail, $password_new_hashed, $oldEmail);
-                $update_masterdata->execute();
+        if ($update_masterdata) {
+            $update_masterdata->bind_param("sssss", $fnameNew, $lnameNew, $newEmail, $password_new_hashed, $oldEmail);
+            $update_masterdata->execute();
 
-                // throw errors or success msg
-                if ($update_masterdata->affected_rows > 0) {
-                    $update_success = "Profil wurde aktualisiert";
-                } else {
-                    $update_fail = "Aktualisierung nicht erfolgreich. Alte Email Adresse möglicherweise inkorrekt";
-                }
-
-                // Close the statement
-                $update_masterdata->close();
+            // throw errors or success msg
+            if ($update_masterdata->affected_rows > 0) {
+                $update_success = "Profil wurde aktualisiert";
             } else {
-                if ($debug)
-                echo "sql statement fehler";
+                $update_fail = "Aktualisierung nicht erfolgreich. Alte Email Adresse möglicherweise inkorrekt";
             }
+
+            // Close the statement
+            $update_masterdata->close();
+        } else {
+            if ($debug)
+                echo "sql statement fehler";
         }
     }
+}
 
-// .................................status change logic............................................//
+// .................................user status change logic............................................//
 
 if (isset($_POST['change_status'])) {
     if (isset($_POST['user-status']) && isset($_POST['uemail'])) {
@@ -75,8 +75,32 @@ if (isset($_POST['change_status'])) {
             } else {
                 $status_update_fail = "Keine Aktulisierung vorgenommen. User Email existiert nicht.";
             }
+            $update_status->close();
+        } else {
+            if ($debug)
+                echo "sql statement fehler";
+        }
+    }
+}
+// .................................reservation status change logic............................................//
 
-            // Close the statement
+if (isset($_POST['change_status_reservation'])) {
+    if (isset($_POST['reservation-id'])) {
+        $selected_status = $_POST['reservation-status'];
+        $reservation_id = $_POST['reservation-id'];
+        // Update the user status
+        $updateQueryStatus = "UPDATE `reservations` SET `reservation_status` = ? WHERE `reservation_id` = ?";
+        $update_status = $db_obj->prepare($updateQueryStatus);
+
+        if ($update_status) {
+            $update_status->bind_param("ss", $selected_status, $reservation_id);
+            $update_status->execute();
+
+            if ($update_status->affected_rows > 0) {
+                $status_update_success_reservation = "Reservierungstatus wurde aktualisiert";
+            } else {
+                $status_update_fail_reservation = "Keine Aktulisierung vorgenommen. Reservierungs-ID existiert nicht.";
+            }
             $update_status->close();
         } else {
             if ($debug)
@@ -138,7 +162,7 @@ if (isset($_POST['change_status'])) {
 
             <!-- change user status form  -->
             <form action="admin.php" method="post">
-                <h2> Change User Status</h2>
+                <h2> User Status ändern</h2>
                 <!-- Email input -->
                 <div class="form-outline mb-4">
                     <input type="text" id="uemail" class="form-control" name="uemail" required />
@@ -165,6 +189,39 @@ if (isset($_POST['change_status'])) {
                         echo $status_update_fail . '<br>';
                     }
                     ?>
+                </div>
+            </form>
+            <!-- change reservation status form  -->
+            <form action="admin.php" method="post">
+                <h2> Reservierung's Status ändern</h2>
+                <!-- Email input -->
+                <div class="form-outline mb-4">
+                    <input type="text" id="reservation-id" class="form-control" name="reservation-id" required />
+                    <label class="form-label" for="reservation-id">Reservierung's ID</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="bestaetigt" name="reservation-status"
+                        value="bestaetigt" checked>
+                    <label class="form-check-label" for="user-status">Bestaetigt</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="storniert" name="reservation-status"
+                        value="storniert">
+                    <label class="form-check-label" for="storniert">Storniert</label>
+                </div>
+                <!-- submit button change status-->
+                <button type="submit" name="change_status_reservation"
+                    class="btn btn-primary btn-block mb-4">OK</button>
+                <div class="error">
+                    <?php
+                    if (isset($status_update_success_reservation)) {
+                        echo $status_update_success_reservation . '<br>';
+                    }
+                    if (isset($status_update_fail_reservation)) {
+                        echo $status_update_fail_reservation . '<br>';
+                    }
+                    ?>
+                </div>
             </form>
         </div>
     </div>

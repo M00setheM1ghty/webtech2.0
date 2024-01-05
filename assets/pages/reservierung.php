@@ -14,19 +14,18 @@ $email = $_SESSION['email'];
 // Check if the form is submitted
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_token']) &&
-    $_POST['reservation_token'] === $_SESSION['reservation_token']
+    $_POST['reservation_token'] === $_SESSION['reservation_token'] && isset($_POST['submit-reservation'])
 ) {
     // Get form data
-    $startDate = $_POST['startDate'];
-    $endDate = $_POST['endDate'];
+    $startDate = $_SESSION['startDate'];
+    $endDate = $_SESSION['endDate'];
     $breakfast = isset($_POST['breakfast']) ? 1 : 0;
     $parking = isset($_POST['parking']) ? 1 : 0;
     $pets = isset($_POST['pets']) ? 1 : 0;
-    $startDate = $_POST['startDate'];
-    $endDate = $_POST['endDate'];
-    $person_amount = $_POST['person_amount'];;
+    $person_amount = $_POST['person_amount'];
+    ;
 
-    //check if dates are correct and do confirm to minimum stay of 2 days
+    //check if dates are correct and confirm to minimum stay of 2 days
     $startDateTime = new DateTime($startDate);
     $endDateTime = new DateTime($endDate);
 
@@ -35,13 +34,10 @@ if (
 
     // Check if the selected end date is at least 2 days after the start date
     if ($endDateTime < $startDateTime) {
-        echo "Error: The minimum booking time is 2 days. Please select an end date at least 2 days after the start date.";
-        exit;
+        echo "Der minimale Buchungszeitraum sind 2 Tage.";
+        exit();
     }
-
-    // Get selected rooms
-    $selectedRooms = isset($_POST['rooms']) ? $_POST['rooms'] : [];
-
+    
     // process data and add to db
     require_once('../../config/dbaccess.php');
 
@@ -66,11 +62,10 @@ if (
     $stmtReservation->close();
 
     // add to `reservation_rooms` table for each selected room
-    foreach ($selectedRooms as $roomNumber) {
+    foreach ($_POST['selectedRooms'] as $roomNumber) {
         $insertReservationRoomQuery = "INSERT INTO `reservation_rooms` (`reservation_id`, `room_id`) 
                                         VALUES (?, ?)";
         $stmtReservationRoom = $db_obj->prepare($insertReservationRoomQuery);
-
         // Retrieve `room_id` based on `room_number`
         $selectRoomIdQuery = "SELECT `room_id` FROM `rooms` WHERE `room_number` = ?";
         $stmtSelectRoomId = $db_obj->prepare($selectRoomIdQuery);
@@ -79,7 +74,6 @@ if (
         $stmtSelectRoomId->bind_result($roomId);
         $stmtSelectRoomId->fetch();
         $stmtSelectRoomId->close();
-
         // Insert into `reservation_rooms`
         $stmtReservationRoom->bind_param("ii", $reservationId, $roomId);
         $stmtReservationRoom->execute();
@@ -91,9 +85,6 @@ if (
     $reservation_success = "Reservierung wurde abgeschickt.";
 
 }
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -109,8 +100,35 @@ if (
         <div class="container">
             <div class="container mt-5">
                 <h2 class="mb-4">Zimmerreservierung</h2>
+                <!-- Reservation Period -->
+                <!-- min value is set to 3 days after current date -->
+                <!-- max value is set to 1 year after current date -->
+                <form action="reservierung.php" method="post" id="display-rooms-form">
+                    <div class="form-group">
+                        <label for="startDate">Anfang</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate"
+                            min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" value="<?php if (isset($_SESSION['startDate'])) {
+                                    echo $_SESSION['startDate'];
+                                } ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Ende</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate"
+                            min="<?php echo date('Y-m-d', strtotime('+5 days')); ?>"
+                            max="<?php echo date('Y-m-d', strtotime('+1 year')); ?>" value="<?php if (isset($_SESSION['endDate'])) {
+                                    echo $_SESSION['endDate'];
+                                } ?>" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3" name="show_rooms">Zeige verfügbare
+                        Zimmer</button>
+
+                </form>
+                <?php if (isset($room_error_msg))
+                    echo $room_error_msg; ?>
+
                 <!-- Reservation-form -->
                 <form id="reservationForm" action="reservierung.php" method="post">
+                    <?php include(dirname(__DIR__) . '/components/display_available_rooms.php'); ?>
                     <!-- Email  -->
                     <div class="form-group">
                         <label for="email">Email</label>
@@ -124,34 +142,6 @@ if (
                         <input type="number" class="form-control" id="person_amount" name="person_amount" max=8
                             required>
                     </div>
-                    <!-- Room Selection -->
-                    <div class="form-group mt-3">
-                        <label>Room Selection</label><br>
-                        <?php
-                        // Display checkboxes for rooms
-                        for ($roomNumber = 101; $roomNumber <= 110; $roomNumber++) {
-                            echo '<div class="form-check form-check-inline">';
-                            echo '<input type="checkbox" class="form-check-input" id="room' . $roomNumber . '" name="rooms[]" value="' . $roomNumber . '">';
-                            echo '<label class="form-check-label" for="room' . $roomNumber . '">Room ' . $roomNumber . '</label>';
-                            echo '</div>';
-                        }
-                        ?>
-                    </div>
-                    <!-- Reservation Period -->
-                    <!-- min value is set to 3 days after current date -->
-                    <!-- max value is set to 1 year after current date -->
-                    <div class="form-group">
-                        <label for="startDate">Anfang</label>
-                        <input type="date" class="form-control" id="startDate" name="startDate"
-                            min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="endDate">Ende</label>
-                        <input type="date" class="form-control" id="endDate" name="endDate"
-                            min="<?php echo date('Y-m-d', strtotime('+5 days')); ?>"
-                            max="<?php echo date('Y-m-d', strtotime('+1 year')); ?>" required>
-                    </div>
-
                     <!-- Additional Features -->
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="breakfast" name="breakfast">
@@ -177,8 +167,9 @@ if (
                     }
                     ?>
                 </form>
-                <!-- end of reservation form -->
+                <!------------------------------------end of reservation form ------------------------------------------------->
             </div>
+
             <div class="container mt-5">
                 <h2 class="mb-4">Aktuelle Reservierungen</h2>
                 <!-- table with current reservation data -->
@@ -201,7 +192,7 @@ if (
                         require_once('../../config/dbaccess.php');
                         $get_reservations_query = "
                             SELECT `reservation_id`, `user_id`, `start_date`, `end_date`,
-                            `breakfast`, `parking`, `pets`, `status`, `person_amount`
+                            `breakfast`, `parking`, `pets`, `reservation_status`, `person_amount`
                             FROM `reservations`
                             WHERE `user_id` IN (SELECT `user_id` FROM `user_profil` WHERE `email` = ?)";
                         $fetch_data = $db_obj->prepare($get_reservations_query);
@@ -225,7 +216,7 @@ if (
                             echo "<td>{$row['breakfast']}</td>";
                             echo "<td>{$row['parking']}</td>";
                             echo "<td>{$row['pets']}</td>";
-                            echo "<td>{$row['status']}</td>";
+                            echo "<td>{$row['reservation_status']}</td>";
                             echo "<td>{$row['person_amount']}</td>";
                             echo "</tr>";
                         }

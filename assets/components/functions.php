@@ -24,23 +24,26 @@ function setToken()
 
 // calculate charge for one reservation
 function calculate_room_charge($room_numbers, $room_prices, $stayDuration)
-  {
-    $total = 0;
-    for ($i = 0; $i < count($room_numbers); $i++) {
-      $rprice = $room_prices[$i];
-      $total += ($stayDuration * $rprice);
-    }
-    return $total;
-  }
-
-//calculate additional costs
-function calculate_additional_charges($parking, $breakfast, $pets, $person_amount, $stayDuration){
+{
   $total = 0;
-  if($parking) $total += 20; 
-  if($pets) $total += 50;
-  if($breakfast) {
-    $total += ((10*$person_amount)*$stayDuration);
+  for ($i = 0; $i < count($room_numbers); $i++) {
+    $rprice = $room_prices[$i];
+    $total += ($stayDuration * $rprice);
   }
   return $total;
-}  
+}
+
+//calculate additional costs
+function calculate_additional_charges($parking, $breakfast, $pets, $person_amount, $stayDuration)
+{
+  $total = 0;
+  if ($parking)
+    $total += 20;
+  if ($pets)
+    $total += 50;
+  if ($breakfast) {
+    $total += ((10 * $person_amount) * $stayDuration);
+  }
+  return $total;
+}
 ?>

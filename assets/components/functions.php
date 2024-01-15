@@ -41,4 +41,43 @@ function calculate_additional_charges($parking, $breakfast, $pets, $person_amoun
   }
   return $total;
 }
+
+// resize an image and save it as a thumbnail
+function createThumbnail($sourcePath, $thumbnailWidth, $thumbnailHeight, $targetDirectory) {
+  list($originalWidth, $originalHeight) = getimagesize($sourcePath);
+
+  $aspectRatio = $originalWidth / $originalHeight;
+
+  // Calculate new dimensions
+  if (($thumbnailWidth / $thumbnailHeight) > $aspectRatio) {
+      $thumbnailWidth = $thumbnailHeight * $aspectRatio;
+  } else {
+      $thumbnailHeight = $thumbnailWidth / $aspectRatio;
+  }
+
+  // Create a new image
+  $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
+
+  // Load the original image
+  $originalImage = imagecreatefromjpeg($sourcePath); // Change the function based on the image type
+
+  // Resize the original image and create the thumbnail
+  imagecopyresampled($thumbnail, $originalImage, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $originalWidth, $originalHeight);
+
+  // Clean up
+  imagedestroy($originalImage);
+
+  // Specify the path for the thumbnail
+  $thumbnailFileName = 'thumbnail_' . basename($sourcePath);
+  $thumbnailPath = $targetDirectory . $thumbnailFileName;
+
+  // Save the thumbnail to the target directory
+  imagejpeg($thumbnail, $thumbnailPath); // Change the function based on the desired thumbnail format
+
+  // Clean up
+  imagedestroy($thumbnail);
+
+  return $thumbnailPath;
+}
 ?>
+

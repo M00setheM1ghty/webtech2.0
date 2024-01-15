@@ -1,6 +1,7 @@
 <?php
 session_start();
 $debug = false;
+include(dirname(__DIR__) . '/components/hide_warnings.php');
 ?>
 
 <!DOCTYPE html>

@@ -1,4 +1,5 @@
 <!-- table with users -->
+<?php $debug = false; ?>
 <div class="table-responsive">
     <table class="table">
         <thead>

@@ -1,4 +1,5 @@
 <?php
+include(dirname(__DIR__) . '/components/hide_warnings.php');
 // Handle logout if the logout button is clicked
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
     // Unset all session variables

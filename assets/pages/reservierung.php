@@ -1,6 +1,7 @@
 <?php
-$debug = true;
+$debug = false;
 session_start();
+include(dirname(__DIR__) . '/components/hide_warnings.php');
 require_once('../components/functions.php');
 // create token and store in session
 if (!isset($_SESSION['reservation_token'])) {

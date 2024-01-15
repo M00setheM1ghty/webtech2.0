@@ -1,7 +1,7 @@
 <?php
 //variable declarations
 $passwordChangeError = "";
-
+include(dirname(__DIR__) . '/components/hide_warnings.php');
 session_start();
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {

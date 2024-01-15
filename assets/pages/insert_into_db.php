@@ -1,5 +1,5 @@
 <?php
-$debug = true;
+$debug = false;
 // include functions
 require_once('../components/functions.php');
 // define variables and set to empty values

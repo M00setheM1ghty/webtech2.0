@@ -1,7 +1,7 @@
 <?php
 session_start();
-
-$debug = true;
+include(dirname(__DIR__) . '/components/hide_warnings.php');
+$debug = false;
 // include functions
 require_once ('../components/functions.php');
 

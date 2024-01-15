@@ -1,4 +1,4 @@
-<footer class="text-center text-lg-start mt-auto py-3 bg-light">
+<footer class="text-center text-lg-start">
   <div class="container">
     Site&copy;2023
     <a class="text-dark" href="index.php">H&auml;mmerle und Söhne GmbH</a>,

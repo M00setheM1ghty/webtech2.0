@@ -27,8 +27,8 @@ include(dirname(__DIR__) . '/components/hide_warnings.php');
                     <?php include(dirname(__DIR__) . '/components/admin_reservations_display.php'); ?>
                 </div>
             </div>
-            <?php include(dirname(__DIR__) . '/components/footer.php'); ?>
     </main>
+    <?php include(dirname(__DIR__) . '/components/footer.php'); ?>
 </body>
 
 </html>

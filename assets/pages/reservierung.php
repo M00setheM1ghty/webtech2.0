@@ -37,7 +37,7 @@ if (
         echo "Der minimale Buchungszeitraum sind 2 Tage.";
         exit();
     }
-    
+
     // process data and add to db
     require_once('../../config/dbaccess.php');
 
@@ -173,60 +173,63 @@ if (
             <div class="container mt-5">
                 <h2 class="mb-4">Aktuelle Reservierungen</h2>
                 <!-- table with current reservation data -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Reservierungsnummer</th>
-                            <th>Checkin</th>
-                            <th>Checkout</th>
-                            <th>Frühstück</th>
-                            <th>Parkplatz</th>
-                            <th>Haustiere</th>
-                            <th>Status</th>
-                            <th>Personen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // Fetch reservations for the current user based on email
-                        require_once('../../config/dbaccess.php');
-                        $get_reservations_query = "
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Reservierungsnummer</th>
+                                <th>Checkin</th>
+                                <th>Checkout</th>
+                                <th>Frühstück</th>
+                                <th>Parkplatz</th>
+                                <th>Haustiere</th>
+                                <th>Status</th>
+                                <th>Personen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Fetch reservations for the current user based on email
+                            require_once('../../config/dbaccess.php');
+                            $get_reservations_query = "
                             SELECT `reservation_id`, `user_id`, `start_date`, `end_date`,
                             `breakfast`, `parking`, `pets`, `reservation_status`, `person_amount`
                             FROM `reservations`
                             WHERE `user_id` IN (SELECT `user_id` FROM `user_profil` WHERE `email` = ?)";
-                        $fetch_data = $db_obj->prepare($get_reservations_query);
-                        $fetch_data->bind_param("s", $email);
-                        $fetch_data->execute();
-                        // put results in an assoc array
-                        $fetched_data_array = $fetch_data->get_result();
+                            $fetch_data = $db_obj->prepare($get_reservations_query);
+                            $fetch_data->bind_param("s", $email);
+                            $fetch_data->execute();
+                            // put results in an assoc array
+                            $fetched_data_array = $fetch_data->get_result();
 
-                        if ($debug) {
-                            if ($fetch_data->error) {
-                                echo "Query error: " . $fetch_data->error;
+                            if ($debug) {
+                                if ($fetch_data->error) {
+                                    echo "Query error: " . $fetch_data->error;
+                                }
+
                             }
+                            // Loop through reservations and display in the table
+                            while ($row = $fetched_data_array->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>{$row['reservation_id']}</td>";
+                                echo "<td>" . date("Y-m-d", strtotime($row['start_date'])) . "</td>";
+                                echo "<td>" . date("Y-m-d", strtotime($row['end_date'])) . "</td>";
+                                echo "<td>{$row['breakfast']}</td>";
+                                echo "<td>{$row['parking']}</td>";
+                                echo "<td>{$row['pets']}</td>";
+                                echo "<td>{$row['reservation_status']}</td>";
+                                echo "<td>{$row['person_amount']}</td>";
+                                echo "</tr>";
+                            }
+                            if ($debug) {
+                                echo "Session variables:";
+                                var_dump($_SESSION);
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
 
-                        }
-                        // Loop through reservations and display in the table
-                        while ($row = $fetched_data_array->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td>{$row['reservation_id']}</td>";
-                            echo "<td>" . date("Y-m-d", strtotime($row['start_date'])) . "</td>";
-                            echo "<td>" . date("Y-m-d", strtotime($row['end_date'])) . "</td>";
-                            echo "<td>{$row['breakfast']}</td>";
-                            echo "<td>{$row['parking']}</td>";
-                            echo "<td>{$row['pets']}</td>";
-                            echo "<td>{$row['reservation_status']}</td>";
-                            echo "<td>{$row['person_amount']}</td>";
-                            echo "</tr>";
-                        }
-                        if ($debug) {
-                            echo "Session variables:";
-                            var_dump($_SESSION);
-                        }
-                        ?>
-                    </tbody>
-                </table>
             </div>
             <?php include(dirname(__DIR__) . '/components/footer.php'); ?>
         </div>

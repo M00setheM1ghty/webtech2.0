@@ -25,7 +25,7 @@ if (isset($email)) {
 }
 $_SESSION['rollen_id'] = $rollen_id;
 ?>
-<nav class="navbar navbar-expand-md navbar-light bg-light">
+<nav class="navbar navbar-expand-md navbar-light bg-white">
     <!-- burger menu for screen size under medium size -->
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"

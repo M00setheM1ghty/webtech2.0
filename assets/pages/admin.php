@@ -25,6 +25,7 @@ include(dirname(__DIR__) . '/components/hide_warnings.php');
                     <?php include(dirname(__DIR__) . '/components/calculate_total_charge.php'); ?>
                     <?php include(dirname(__DIR__) . '/components/change_masterdata.php'); ?>
                     <?php include(dirname(__DIR__) . '/components/admin_reservations_display.php'); ?>
+                    <?php include(dirname(__DIR__) . '/components/add_news_entry.php'); ?>
                 </div>
             </div>
     </main>

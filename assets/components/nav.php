@@ -44,6 +44,9 @@ $_SESSION['rollen_id'] = $rollen_id;
                 <li class="nav-item">
                     <a href="faq.php" class="nav-link">FAQ</a>
                 </li>
+                <li class="nav-item">
+                    <a href="news.php" class="nav-link">News</a>
+                </li>
                 <!-- display reservation if username is set -->
                 <?php
                 if (isset($_SESSION['username'])) {

@@ -84,6 +84,8 @@ if (
     }
     // success msg
     $reservation_success = "Reservierung wurde abgeschickt.";
+    unset($_SESSION['startDate']);
+    unset($_SESSION['endDate']);
 
 }
 ?>

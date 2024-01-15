@@ -26,7 +26,7 @@ include(dirname(__DIR__) . '/components/hide_warnings.php');
                     require_once('../../assets/components/functions.php');
                     require_once('../../config/dbaccess.php');
                     // Fetch data from the database
-                    $sql = "SELECT id, filename, thumbnail_path, description, uploaded_at FROM images";
+                    $sql = "SELECT id, filename, thumbnail_path, description, uploaded_at FROM images ORDER BY uploaded_at DESC";
                     $result = $db_obj->query($sql);
 
                     // Check if there are results
@@ -50,7 +50,7 @@ include(dirname(__DIR__) . '/components/hide_warnings.php');
                         echo '</div>';
                         echo '</div>';
                     } else {
-                        echo '<p class="text-center">No images found.</p>';
+                        echo '<p class="text-center">Keine Beiträge gefunden.</p>';
                     }
 
                     // Close the database connection

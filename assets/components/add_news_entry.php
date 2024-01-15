@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_paths'])) {
     $check = getimagesize($_FILES["file"]["tmp_name"]);
     if ($check !== false) {
         // Allow certain file formats
-        $allowedTypes = array("jpg", "jpeg", "png");
+        $allowedTypes = array("jpg", "jpeg");
         if (in_array($fileType, $allowedTypes)) {
             // Move the uploaded file to the destination directory
             move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath);
@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_paths'])) {
             <input type?="text" name="titel" id="titel" class="form-control" rows="4" required></input>
         </div>
 
-        <button type="submit" class="btn btn-primary" name="submit_paths">Abschicken</button>
+        <button type="submit" class="btn btn-dark" name="submit_paths">Abschicken</button>
         <?php if (isset($success_upload)) echo "<br>" . $success_upload . "<br>";?>
         <?php if (isset($fail_upload)) echo $success_upload;?>
     </form>

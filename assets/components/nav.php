@@ -101,7 +101,7 @@ $_SESSION['rollen_id'] = $rollen_id;
                 <?php
                 if (isset($_SESSION['username'])) {
                     echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '">
-                <button type="submit" name="logout">Logout</button>
+                <button class="btn btn-dark float-end" type="submit" name="logout">Logout</button>
             </form>';
                 }
                 ?>

@@ -157,7 +157,7 @@ if (isset($_POST['change_status_reservation'])) {
                     } ?>
                 </div>
                 <!-- submit button change masterdata -->
-                <button type="submit" name="change_masterdata" class="btn btn-primary btn-block mb-4">OK</button>
+                <button type="submit" name="change_masterdata" class="btn btn-dark btn-block mb-4">OK</button>
             </form>
 
             <!-- change user status form  -->
@@ -179,7 +179,7 @@ if (isset($_POST['change_status_reservation'])) {
                     <label class="form-check-label" for="user-status-inactive">Inactive</label>
                 </div>
                 <!-- submit button change status-->
-                <button type="submit" name="change_status" class="btn btn-primary btn-block mb-4">OK</button>
+                <button type="submit" name="change_status" class="btn btn-dark btn-block mb-4">OK</button>
                 <div class="error">
                     <?php
                     if (isset($status_update_success)) {
@@ -211,7 +211,7 @@ if (isset($_POST['change_status_reservation'])) {
                 </div>
                 <!-- submit button change status-->
                 <button type="submit" name="change_status_reservation"
-                    class="btn btn-primary btn-block mb-4">OK</button>
+                    class="btn btn-dark btn-block mb-4">OK</button>
                 <div class="error">
                     <?php
                     if (isset($status_update_success_reservation)) {

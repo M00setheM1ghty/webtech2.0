@@ -14,7 +14,7 @@
 
         <h2 class="mb-4">Aktuelle Reservierungen</h2>
         <form action="admin.php" method="post">
-            <button type="submit" name="show_details">Show Details</button>
+            <button type="submit" name="show_details" class="btn btn-primary btn-block mb-4">Show Details</button>
         </form>
         <!-- table with current reservation data -->
         <div class="table-responsive">

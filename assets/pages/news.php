@@ -21,6 +21,7 @@ include(dirname(__DIR__) . '/components/hide_warnings.php');
                         <h1 class="display-5 fw-bold">News-Beiträge</h1>
                         <p class="col-md-8 fs-4">Aktuelles aus dem Hotel</p>
                     </div>
+                </div>
                     <!-- display News-Beiträge-->
                     <?php
                     require_once('../../assets/components/functions.php');
@@ -33,7 +34,7 @@ include(dirname(__DIR__) . '/components/hide_warnings.php');
                     if ($result->num_rows > 0) {
                         echo '<div class="container">';
                         echo '<div class="row">';
-
+                    
                         while ($row = $result->fetch_assoc()) {
                             echo '<div class="col-md-4 mb-4">';
                             echo '<div class="card">';
@@ -46,17 +47,17 @@ include(dirname(__DIR__) . '/components/hide_warnings.php');
                             echo '</div>';
                             echo '</div>';
                         }
-
+                    
                         echo '</div>';
                         echo '</div>';
                     } else {
                         echo '<p class="text-center">Keine Beiträge gefunden.</p>';
                     }
+                    
 
                     // Close the database connection
                     $db_obj->close();
                     ?>
-                </div>
             </div>
     </main>
     <?php include(dirname(__DIR__) . '/components/footer.php'); ?>

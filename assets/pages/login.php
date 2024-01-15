@@ -3,7 +3,7 @@ session_start();
 include(dirname(__DIR__) . '/components/hide_warnings.php');
 $debug = false;
 // include functions
-require_once ('../components/functions.php');
+require_once('../components/functions.php');
 
 
 
@@ -37,23 +37,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // compare passwords
         $pswd_match = password_verify($password_input, $user_pswd_hashed);
         if ($debug) {
-          echo "Password Match: " . ($pswd_match ? 'Yes' : 'No') . "<br>";
-      }
-      // handle user_status and pswd match
-        if($user_status === 'active') {
+            echo "Password Match: " . ($pswd_match ? 'Yes' : 'No') . "<br>";
+        }
+        // handle user_status and pswd match
+        if ($user_status === 'active') {
             if ($pswd_match) {
                 $_SESSION['username'] = $user_name;
                 $_SESSION['email'] = $user_mail;
                 $_SESSION['pswd'] = $user_pswd_hashed;
-    
-                $pswd_success = 'Passwort ist gültig.'; 
+                $inactive_user_msg = '';
+
+                $pswd_success = 'Passwort ist gültig.';
                 header('Location: profile.php');
                 exit();
-            } else {
-                $loginError = 'Falscher username oder passwort';
             }
-        } else {
+        }
+        if (!$pswd_match) {
+            $loginError = 'Falscher username oder passwort';
+            $inactive_user_msg = '';
+        }
+        if ($user_status === 'inactive') {
             $inactive_user_msg = 'User wurde vom Admin deaktiviert. Bitte wenden Sie sich an den Support.';
+            $loginError = '';
         }
         
     }

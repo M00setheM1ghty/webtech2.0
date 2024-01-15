@@ -67,8 +67,8 @@
     </div>
   </div>
 
-  <button type="reset">Reset</button>
-  <button type="submit" name="reg_submit" value="Register">Submit</button>
+  <button type="reset" class="btn btn-primary btn-block mb-4">Reset</button>
+  <button type="submit" name="reg_submit" value="Register" class="btn btn-primary btn-block mb-4">Submit</button>
 </form>
 
 <?php

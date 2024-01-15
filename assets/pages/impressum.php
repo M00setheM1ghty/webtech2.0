@@ -60,14 +60,19 @@ session_start();
 
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-6">
-                            <p>Thomas Baumann</p>
-                            <img src="../images/thomasb.jpg" width="250" height="200" class="img-fluid"
-                                alt="thomas baumann porträt">
+                        <div class="col-6">
+                            <figure class="figure">
+                                <img src="../images/ThomasB.jpg" class="figure-img img-fluid rounded"
+                                    alt="Thomas Baumann" style="width:50%">
+                                <figcaption class="figure-caption text-right">Baumann Thomas</figcaption>
+                            </figure>
                         </div>
-                        <div class="col-md-6">
-                            <p>Markus H&auml;mmerle</p>
-                            <img src="../images/MarkusH.png" class="img-fluid" alt="Markus Hämmerle portät">
+                        <div class="col-6">
+                            <figure class="figure">
+                                <img src="../images/MarkusH.jpg" class="figure-img img-fluid rounded"
+                                    alt="Markus Hämmerle" style="width:50%">
+                                <figcaption class="figure-caption text-right">Markus H&auml;mmerle</figcaption>
+                            </figure>
                         </div>
                     </div>
                 </div>

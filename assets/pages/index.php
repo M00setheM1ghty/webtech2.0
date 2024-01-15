@@ -21,19 +21,46 @@ include(dirname(__DIR__) . '/components/hide_warnings.php');
             <p class="col-md-8 fs-4">Willkommen bei uns im schönen Lech am Arlberg!</p>
           </div>
         </div>
-        <hr>
-        <div class="container">
-          <h2>News und Aktuelles</h2>
+        <div class="slider">
+          <div class="slide-track">
+            <div class="slide">
+              <img src="../images/slider1.jpg" height="400" width="600" alt="" />
+            </div>
+            <div class="slide">
+              <img src="../images/slider2.jpg" height="400" width="600" alt="" />
+            </div>
+            <div class="slide">
+              <img src="../images/slider3.jpg" height="400" width="600" alt="" />
+            </div>
+            <div class="slide">
+              <img src="../images/slider4.jpg" height="400" width="600" alt="" />
+            </div>
+            <div class="slide">
+              <img src="../images/slider1.jpg" height="400" width="600" alt="" />
+            </div>
+            <div class="slide">
+              <img src="../images/slider2.jpg" height="400" width="600" alt="" />
+            </div>
+            <div class="slide">
+              <img src="../images/slider3.jpg" height="400" width="600" alt="" />
+            </div>
+            <div class="slide">
+              <img src="../images/slider4.jpg" height="400" width="600" alt="" />
+            </div>
+            <div class="slide">
+              <img src="../images/slider1.jpg" height="400" width="600" alt="" />
+            </div>
+          </div>
         </div>
         <hr>
-        <?php include(dirname(__DIR__) . '/components/news/winterSaisonStart.php'); ?>
-        <?php include(dirname(__DIR__) . '/components/news/festivitaeten.php'); ?>
-        <?php include(dirname(__DIR__) . '/components/news/schneeInLech.php'); ?>
-        <?php include(dirname(__DIR__) . '/components/news/MarcGusner.php'); ?>
-
-        <?php include(dirname(__DIR__) . '/components/footer.php'); ?>
+        <div class="container">
+          <h2>Neuigkeiten</h2>
+        </div>
+        <hr>
+        <?php include(dirname(__DIR__) . '/components/announcement.php'); ?>
       </div>
     </div>
+    <?php include(dirname(__DIR__) . '/components/footer.php'); ?>
   </main>
 </body>
 

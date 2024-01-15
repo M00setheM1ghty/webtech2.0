@@ -101,8 +101,14 @@ if (
     <?php include(dirname(__DIR__) . '/components/nav.php'); ?>
     <main>
         <div class="container">
+            <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+                <div class="container-fluid py-5">
+                    <h1 class="display-5 fw-bold">Zimmerreservierung</h1>
+                    <p class="col-md-8 fs-4">Reservieren Sie hier ihr Zimmer</p>
+                </div>
+            </div>
+        
             <div class="container mt-5">
-                <h2 class="mb-4">Zimmerreservierung</h2>
                 <!-- Reservation Period -->
                 <!-- min value is set to 3 days after current date -->
                 <!-- max value is set to 1 year after current date -->
@@ -122,7 +128,7 @@ if (
                                     echo $_SESSION['endDate'];
                                 } ?>" required>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3" name="show_rooms">Zeige verfügbare
+                    <button type="submit" class="btn btn-dark mt-3" name="show_rooms">Zeige verfügbare
                         Zimmer</button>
 
                 </form>
@@ -161,7 +167,7 @@ if (
 
                     <!-- Submit Button -->
                     <input type="hidden" name="reservation_token" value="<?php echo $_SESSION['reservation_token']; ?>">
-                    <button type="submit" class="btn btn-primary mt-3" name="submit-reservation">Submit
+                    <button type="submit" class="btn btn-dark mt-3" name="submit-reservation">Submit
                         Reservation</button>
                     <!-- echo successful reservation submission-->
                     <?php

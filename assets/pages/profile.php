@@ -90,15 +90,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
 
 
         <div class="row">
-            <div class="col-auto">
+            <div class="col-6">
                 Email:
                 <?php if (isset($_SESSION['email'])) {
                     echo $_SESSION['email'];
                 } ?>
             </div>
-            <div class="col-auto">
+            <div class="col-6">
                 <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                    <button type="submit" name="logout">Logout</button>
+                    <button class="btn btn-dark float-end" type="submit" name="logout">Logout</button>
                 </form>
             </div>
         </div>
@@ -112,16 +112,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
                     Eindrücke zu sehen! #ErlebnisTeilen</p>
             </div>
         </div>
-        <form method="post" enctype="multipart/form-data" action="../components/process-form.php">
-            <div class="d-flex justify-content-center">
-                <!-- <input type="hidden" name="MAX_FILE_SIZE" value="1048576"> -->
-                <label for="image">Image file</label>
-                <input type="file" id="image" name="image">
+        <div class="row">
+            <form method="post" enctype="multipart/form-data" action="../components/process-form.php">
+                <div class="d-flex justify-content-center">
+                    
+                    <label class="userupload" for="image">Image file</label>
+                    <input class="userupload" type="file" id="image" name="image">
+                    <button class="userupload btn btn-dark mt-3">Upload</button>
 
-                <button>Upload</button>
-
-            </div>
-        </form>
+                </div>
+            </form>
+        </div>
         <?php
         if (isset($_COOKIE["uploadStatus"])) {
             echo "Upload Sucessfull!";
@@ -134,27 +135,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change-password'])) {
             </div>
         </div>
         <!-- change password form-->
+        <div class="p-5 mb-4 bg-body-tertiary rounded-3">
         <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
             <div class="row">
                 <div class="col-auto">
                     <label for="current-password">Password:</label>
-                    <input type="password" name="current-password" required>
+                    <input type="password" class="form-control" name="current-password" required>
                 </div>
                 <div class="col-auto">
                     <label for="new-password">Neues Passwort:</label>
-                    <input type="password" name="new-password" required>
+                    <input type="password" class="form-control" name="new-password" required>
                 </div>
                 <div class="col-auto">
                     <label for="new-password-check">Neues Passwort bestätigen:</label>
-                    <input type="password" name="new-password-check" required>
+                    <input type="password" class="form-control" name="new-password-check" required>
                 </div>
                 <div class="col-auto">
-                    <button type="submit" name="change-password">Passwort ändern</button>
+                    <button class="btn btn-dark mt-3" type="submit" name="change-password">Passwort ändern</button>
                 </div>
                 <?php echo $passwordChangeError
                     ?>
             </div>
         </form>
+    </div>
         <?php
         // Display success message or error message
         if (isset($passwordChangeSuccess)) {

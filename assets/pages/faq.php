@@ -45,7 +45,7 @@ session_start();
                         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                Sie können sich hier registrieren: <a href="regform.php">Registrierung</a>
+                                Sie können sich hier registrieren: <a href="registration.php">Registrierung</a>
                             </div>
                         </div>
                     </div>
@@ -60,6 +60,20 @@ session_start();
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 Sie können sich hier einloggen: <a href="login.php">Login</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingExtra">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseExtra" aria-expanded="false" aria-controls="collapseExtra">
+                                Wo kann ich eine Reservierung tätigen?
+                            </button>
+                        </h2>
+                        <div id="collapseExtra" class="accordion-collapse collapse" aria-labelledby="headingExtra"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Hier zur Reservierung: <a href="reservierung.php">Reservierung</a>
                             </div>
                         </div>
                     </div>

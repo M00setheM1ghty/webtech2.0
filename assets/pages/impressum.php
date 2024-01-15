@@ -38,7 +38,7 @@ session_start();
                     <li>FB-Gericht: Feldkirch</li>
                     <li>Mitglied der WK&Ouml;, Wirtschaftkammer Vorarlberg</li>
                     <li>Berufsrecht: ?<br>
-                        <a href="www.ris.bka.gv.at" target="_blank" rel="noopener"
+                        <a href="https://www.ris.bka.gv.at/" target="_blank" rel="noopener"
                             aria-label="brings you to the WKÖ homepage">Gewerbeordnung: </a>
                     </li>
                     <li>Aufsichtsbehörde: Bezirkshauptmannschaft Bludenz</li>
